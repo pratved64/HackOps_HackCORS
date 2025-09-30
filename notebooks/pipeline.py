@@ -27,11 +27,13 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # chromadb connection
 print("Connecting to chromadb...")
-# client = chromadb.HttpClient(
-#     host=CHROMA_HOST,
-#     headers={"Authorization": f"Bearer: {CHROMA_API_KEY}"}
-# )
+client = chromadb.CloudClient(
+    api_key=CHROMA_API_KEY,
+    tenant=CHROMA_HOST,               
+    database='hackcora'                                           
+)
 
+collection = client.get_collection('journal_db')
 
 def get_scibert_embedding(text):
     inputs = tokenizer(text, return_tensors='pt', truncation=True, padding=True, max_length=512).to(device)
@@ -44,60 +46,36 @@ def get_scibert_embedding(text):
     sum_embeddings = torch.sum(last_hidden_states * mask_expanded, 1)
     sum_mask = torch.clamp(mask_expanded.sum(1), min=1e-9)
     mean_pooled_embedding = sum_embeddings / sum_mask
-    return mean_pooled_embedding.cpu().numpy().tolist()
+    return mean_pooled_embedding[0].cpu().numpy().tolist()
 
-# SAMPLE, REMOVE BEFORE PUSHING TO DEPLOYMENT
-journals = [
-    {
-        "id": "J001",
-        "title": "Journal of Machine Learning Research",
-        "description": "Provides a forum for the dissemination of research in all areas of machine learning.",
-        "citations": 150000,
-        "publisher": "MIT Press"
-    },
-    {
-        "id": "J002",
-        "title": "Nature Biotechnology",
-        "description": "A monthly journal covering the science and business of biotechnology. Publishes new concepts in technology and methodology.",
-        "citations": 850000,
-        "publisher": "Springer Nature"
-    },
-    {
-        "id": "J003",
-        "title": "Cell",
-        "description": "Publishes findings of unusual significance in any area of experimental biology, including molecular biology, genetics, and immunology.",
-        "citations": 1200000,
-        "publisher": "Cell Press"
-    },
-    {
-        "id": "J004",
-        "title": "The Lancet",
-        "description": "An international general medical journal that publishes high-impact research, reviews, and clinical cases.",
-        "citations": 2500000,
-        "publisher": "Elsevier"
-    }
-]
+results = collection.get(include=["metadatas", "documents"])
+print(f"Found {len(results['ids'])} journals to process.")
 
-for journal in tqdm.tqdm(journals, desc="Processing Journals..."):
-    text_to_embed = f"{journal['title']}: {journal['description']}"
+for i in tqdm.tqdm(range(len(results['ids'])), desc="Processing Journals..."):
+    journal_id = results['ids'][i]
+    journal_metadata = results['metadatas'][i]
+    journal_document = results['documents'][i]
 
+    # You can reconstruct the text from the document or metadata
+    # Assuming the document is already in the format: "title: description"
+    text_to_embed = journal_document
+
+    # 3. Generate the new embedding
     embedding = get_scibert_embedding(text_to_embed)
-    print(embedding[:10])
 
-    # collection.upsert( # define collections once the chromadb is ready
-    #     ids=[journal["id"]],
-    #     embeddings=embedding,
-    #     documents=[text_to_embed],
-    #     metadatas=[{
-    #         "title": journal["title"],
-    #         "citations": journal["citations"],
-    #         "publisher": journal["publisher"]
-    #     }]
-    # )
+    # 4. Upsert the data with the new embedding
+    # This updates the entry with the matching ID, adding the embedding.
+    # It will not erase other data or the database.
+    collection.upsert(
+        ids=[journal_id],
+        embeddings=[embedding],
+        documents=[journal_document], # Keep the original document
+        metadatas=[journal_metadata]  # Keep the original metadata
+    )
 
 print("\nEnrichment complete! All journals now have a vector embedding in the database.")
 
 print("\n--- Verifying the data ---")
-# count = collection.count()
-# print(f"The collection now contains {count} items.")
+count = collection.count()
+print(f"The collection now contains {count} items.")
 

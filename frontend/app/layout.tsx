@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <Providers>
-          <div className="min-h-screen bg-background">
+          <div className="min-h-screen bg-background grid-overlay">
             <Navigation />
             <main className="pt-16">
               {children}

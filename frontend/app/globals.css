@@ -77,7 +77,41 @@
     border-color: hsl(var(--border));
   }
   body {
+    /* Layered gradient background for subtle depth */
     background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(1200px 600px at 10% -10%, rgba(139, 92, 246, 0.12), transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, rgba(236, 72, 153, 0.12), transparent 60%),
+      radial-gradient(900px 500px at -10% 90%, rgba(168, 85, 247, 0.12), transparent 60%),
+      linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.06),
+        rgba(255, 255, 255, 0.02)
+      );
     color: hsl(var(--foreground));
+    background-attachment: fixed;
+  }
+}
+
+/* Glassmorphism + Neobrutalism utilities */
+@layer components {
+  .glass {
+    @apply bg-white/10 dark:bg-white/5 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15)];
+  }
+  .glass-strong {
+    @apply bg-white/20 dark:bg-white/10 backdrop-blur-2xl border border-white/30 dark:border-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2)];
+  }
+  .brutal {
+    @apply border-2 border-slate-900 dark:border-slate-100 shadow-[6px_6px_0_0_rgba(2,6,23,0.9)] dark:shadow-[6px_6px_0_0_rgba(255,255,255,0.12)];
+  }
+  .brutal-hover {
+    @apply transition-transform duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[8px_8px_0_0_rgba(2,6,23,1)] dark:hover:shadow-[8px_8px_0_0_rgba(255,255,255,0.18)];
+  }
+  .neo-text {
+    @apply drop-shadow-[0_1px_0_rgba(255,255,255,0.6)] dark:drop-shadow-[0_1px_0_rgba(0,0,0,0.6)];
+  }
+  .grid-overlay {
+    background-image: linear-gradient(rgba(100, 116, 139, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(100, 116, 139, 0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
   }
 }

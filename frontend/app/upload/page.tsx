@@ -130,9 +130,9 @@ export default function UploadPage() {
   };
 
   const getMatchScoreColor = (score: number) => {
-    if (score >= 90) return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300';
-    if (score >= 80) return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300';
-    if (score >= 70) return 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300';
+    if (score >= 90) return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300';
+    if (score >= 80) return 'bg-violet-100 text-violet-800 dark:bg-violet-900/30 dark:text-violet-300';
+    if (score >= 70) return 'bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-900/30 dark:text-fuchsia-300';
     return 'bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300';
   };
 
@@ -165,7 +165,7 @@ export default function UploadPage() {
 
         <div className="grid lg:grid-cols-2 gap-8 mb-12">
           {/* Upload Methods */}
-          <Card className="shadow-sm border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800">
+          <Card className="glass brutal bg-white/5 dark:bg-white/5">
             <CardHeader>
               <CardTitle className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                 Upload Your Research
@@ -279,7 +279,7 @@ export default function UploadPage() {
           </Card>
 
           {/* Analysis Status */}
-          <Card className="shadow-sm border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800">
+          <Card className="glass brutal bg-white/5 dark:bg-white/5">
             <CardHeader>
               <CardTitle className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                 Analysis Status
@@ -320,7 +320,7 @@ export default function UploadPage() {
                 </div>
               ) : results ? (
                 <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-5 w-5 text-emerald-500" />
+                  <CheckCircle className="h-5 w-5 text-purple-500" />
                   <span className="text-slate-900 dark:text-slate-100 font-medium">
                     Analysis complete! Found {results.length} matching journals.
                   </span>
@@ -341,7 +341,7 @@ export default function UploadPage() {
 
         {/* Results Table */}
         {results && (
-          <Card className="shadow-sm border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800">
+          <Card className="glass brutal bg-white/5 dark:bg-white/5">
             <CardHeader>
               <CardTitle className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                 Recommended Journals

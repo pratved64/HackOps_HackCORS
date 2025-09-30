@@ -70,7 +70,7 @@ export default function Home() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-3xl sm:text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+                <div className="text-3xl sm:text-4xl font-bold text-purple-600 dark:text-purple-300 mb-2">
                   {stat.value}
                 </div>
                 <div className="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium">

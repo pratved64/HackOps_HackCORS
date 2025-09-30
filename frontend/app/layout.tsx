@@ -7,7 +7,7 @@ import { Navigation } from '@/components/navigation';
 
 
 export const metadata: Metadata = {
-  title: 'JournalFinder - AI-Powered Journal Recommendations',
+  title: 'JournalPal.ai - AI-Powered Journal Recommendations',
   description: 'Discover the perfect journals for your research with AI-powered recommendations. Save time and boost publication success rates.',
 };
 
@@ -18,9 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body suppressHydrationWarning>
         <Providers>
-          <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-slate-900">
+          <div className="min-h-screen bg-background">
             <Navigation />
             <main className="pt-16">
               {children}

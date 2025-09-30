@@ -29,11 +29,11 @@ export default function AuthPage() {
         <div className="space-y-8">
           <div>
             <div className="flex items-center space-x-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-emerald-600 rounded-xl flex items-center justify-center">
-                <BookOpen className="h-7 w-7 text-white" />
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-slate-900 dark:bg-slate-100">
+                <BookOpen className="h-7 w-7 text-white dark:text-slate-900" />
               </div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
-                JournalFinder
+              <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+                JournalPal.ai
               </h1>
             </div>
             <h2 className="text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
@@ -138,7 +138,7 @@ export default function AuthPage() {
                   </div>
                   <Button
                     type="submit"
-                    className="w-full h-11 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white font-semibold rounded-lg transition-all duration-300"
+                    className="w-full h-11 bg-slate-900 hover:bg-black dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 text-white font-semibold rounded-lg transition-all duration-300"
                     disabled={isLoading}
                   >
                     {isLoading ? 'Signing In...' : 'Sign In'}
@@ -195,7 +195,7 @@ export default function AuthPage() {
                   </div>
                   <Button
                     type="submit"
-                    className="w-full h-11 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white font-semibold rounded-lg transition-all duration-300"
+                    className="w-full h-11 bg-slate-900 hover:bg-black dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 text-white font-semibold rounded-lg transition-all duration-300"
                     disabled={isLoading}
                   >
                     {isLoading ? 'Creating Account...' : 'Create Account'}

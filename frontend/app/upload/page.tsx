@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef } from 'react';
+import * as pdfjsLib from 'pdfjs-dist/build/pdf.mjs';
+import mammoth from 'mammoth/mammoth.browser';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -75,17 +77,64 @@ export default function UploadPage() {
   const [uploadMethod, setUploadMethod] = useState<'file' | 'text'>('file');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const extractPdfText = async (file: File): Promise<string> => {
+    // Configure pdfjs worker: use CDN to avoid bundler worker resolution issues
+    (pdfjsLib as any).GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@4.6.82/build/pdf.worker.min.mjs';
+    const arrayBuffer = await file.arrayBuffer();
+    const loadingTask = (pdfjsLib as any).getDocument({ data: arrayBuffer });
+    const pdf = await loadingTask.promise;
+    let fullText = '';
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+      const page = await pdf.getPage(pageNum);
+      const content = await page.getTextContent();
+      const strings = content.items.map((item: any) => item.str);
+      fullText += strings.join(' ') + '\n';
+    }
+    return fullText.trim();
+  };
+
+  const extractDocxText = async (file: File): Promise<string> => {
+    const arrayBuffer = await file.arrayBuffer();
+    const result = await (mammoth as any).extractRawText({ arrayBuffer });
+    return (result.value || '').trim();
+  };
+
   const handleFileUpload = async (file: File) => {
     if (!file) return;
     
     setIsAnalyzing(true);
     setResults(null);
-    
-    // Simulate API call
-    setTimeout(() => {
+
+    try {
+      let extractedText = '';
+      if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+        extractedText = await extractPdfText(file);
+      } else if (file.type.includes('word') || file.name.toLowerCase().endsWith('.docx')) {
+        extractedText = await extractDocxText(file);
+      } else {
+        extractedText = await file.text();
+      }
+
+      // Log extracted content
+      console.log('[Upload] Extracted text characters:', extractedText.length);
+      console.log('[Upload] First 1000 chars:', extractedText.slice(0, 1000));
+
+      // Store for later steps
+      sessionStorage.setItem('uploadedPaperText', extractedText);
+
+      // Send to backend
+      await sendPaperToBackend({
+        filename: file.name,
+        mimeType: file.type,
+        text: extractedText,
+      });
+
       setResults(dummyJournals);
+    } catch (err) {
+      console.error('Failed to process file:', err);
+    } finally {
       setIsAnalyzing(false);
-    }, 3000);
+    }
   };
 
   const handleTextSubmit = async (e: React.FormEvent) => {
@@ -93,11 +142,19 @@ export default function UploadPage() {
     setIsAnalyzing(true);
     setResults(null);
     
-    // Simulate API call
-    setTimeout(() => {
-      setResults(dummyJournals);
-      setIsAnalyzing(false);
-    }, 3000);
+    // For demo, read values directly from inputs
+    const titleEl = (document.getElementById('title') as HTMLInputElement);
+    const abstractEl = (document.getElementById('abstract') as HTMLTextAreaElement);
+    const text = `Title: ${titleEl?.value || ''}\n\nAbstract: ${abstractEl?.value || ''}`.trim();
+    console.log('[Upload] Text input chars:', text.length);
+    sessionStorage.setItem('uploadedPaperText', text);
+    try {
+      await sendPaperToBackend({ filename: 'manual-input.txt', mimeType: 'text/plain', text });
+    } catch (err) {
+      console.error('Failed sending text to backend:', err);
+    }
+    setResults(dummyJournals);
+    setIsAnalyzing(false);
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -130,6 +187,22 @@ export default function UploadPage() {
     return 'bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300';
   };
 
+  const sendPaperToBackend = async (payload: { filename: string; mimeType: string; text: string; }) => {
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
+    const res = await fetch(`${baseUrl}/api/papers`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`Backend error ${res.status}: ${body}`);
+    }
+    return res.json();
+  };
+
   return (
     <div className="min-h-screen px-4 py-12">
       <div className="max-w-6xl mx-auto">
@@ -144,7 +217,7 @@ export default function UploadPage() {
 
         <div className="grid lg:grid-cols-2 gap-8 mb-12">
           {/* Upload Methods */}
-          <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+          <Card className="shadow-sm border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800">
             <CardHeader>
               <CardTitle className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                 Upload Your Research
@@ -187,8 +260,8 @@ export default function UploadPage() {
                   onDragLeave={handleDragLeave}
                 >
                   <div className="space-y-4">
-                    <div className="mx-auto w-12 h-12 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-xl flex items-center justify-center">
-                      <Upload className="h-6 w-6 text-white" />
+                    <div className="mx-auto w-12 h-12 rounded-xl flex items-center justify-center border border-slate-200 dark:border-slate-700">
+                      <Upload className="h-6 w-6 text-slate-900 dark:text-slate-100" />
                     </div>
                     <div>
                       <p className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
@@ -237,7 +310,7 @@ export default function UploadPage() {
                   </div>
                   <Button 
                     type="submit" 
-                    className="w-full h-11 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700"
+                    className="w-full h-11 bg-slate-900 hover:bg-black dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
                     disabled={isAnalyzing}
                   >
                     {isAnalyzing ? (
@@ -258,7 +331,7 @@ export default function UploadPage() {
           </Card>
 
           {/* Analysis Status */}
-          <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+          <Card className="shadow-sm border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800">
             <CardHeader>
               <CardTitle className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                 Analysis Status
@@ -278,19 +351,19 @@ export default function UploadPage() {
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center space-x-3">
-                      <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-slate-500 rounded-full animate-pulse"></div>
                       <span className="text-sm text-slate-600 dark:text-slate-300">
                         Extracting key concepts and topics
                       </span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-slate-500 rounded-full animate-pulse"></div>
                       <span className="text-sm text-slate-600 dark:text-slate-300">
                         Matching with journal database
                       </span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-slate-500 rounded-full animate-pulse"></div>
                       <span className="text-sm text-slate-600 dark:text-slate-300">
                         Calculating compatibility scores
                       </span>
@@ -320,7 +393,7 @@ export default function UploadPage() {
 
         {/* Results Table */}
         {results && (
-          <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+          <Card className="shadow-sm border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800">
             <CardHeader>
               <CardTitle className="text-2xl font-bold text-slate-900 dark:text-slate-100 flex items-center">
                 <Star className="mr-2 h-6 w-6 text-yellow-500" />

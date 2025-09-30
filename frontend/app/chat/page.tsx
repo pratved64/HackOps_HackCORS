@@ -208,7 +208,7 @@ export default function ChatPage() {
       return (
         <div className="flex justify-end mb-4">
           <div className="flex items-start space-x-3 max-w-3xl">
-            <div className="bg-gradient-to-r from-blue-600 to-emerald-600 text-white p-4 rounded-2xl rounded-tr-md shadow-lg">
+            <div className="bg-slate-900 dark:bg-white dark:text-slate-900 text-white p-4 rounded-2xl rounded-tr-md shadow-lg">
               <p className="text-sm leading-relaxed">{message.content}</p>
             </div>
             <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
@@ -222,7 +222,7 @@ export default function ChatPage() {
     return (
       <div className="flex justify-start mb-4">
         <div className="flex items-start space-x-3 max-w-4xl">
-          <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-slate-900 dark:bg-slate-100">
             <Bot className="h-4 w-4 text-white" />
           </div>
           <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl rounded-tl-md shadow-lg border border-slate-200 dark:border-slate-700">
@@ -302,14 +302,14 @@ export default function ChatPage() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {quickActions.map((action, index) => (
+          {quickActions.map((action) => (
             <Button
-              key={index}
+              key={`qa-${action.label}`}
               variant="outline"
-              className="h-auto p-4 flex flex-col items-center space-y-2 hover:shadow-md transition-all duration-300"
+              className="h-auto p-4 flex flex-col items-center space-y-2 hover:shadow-md transition-all duration-300 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-500 dark:hover:text-slate-900"
               onClick={() => handleQuickAction(action.query)}
             >
-              <action.icon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <action.icon className="h-5 w-5" />
               <span className="text-sm font-medium text-center">{action.label}</span>
             </Button>
           ))}
@@ -319,12 +319,14 @@ export default function ChatPage() {
         <Card className="flex-1 shadow-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
           <CardContent className="p-6">
             <div className="h-96 overflow-y-auto space-y-4 mb-6" id="messages-container">
-              {messages.map((message) => renderMessage(message))}
+              {messages.map((message) => (
+                <div key={`msg-${message.id}-${message.timestamp.getTime()}`}>{renderMessage(message)}</div>
+              ))}
               
               {isTyping && (
                 <div className="flex justify-start mb-4">
                   <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-900 dark:bg-slate-100">
                       <Bot className="h-4 w-4 text-white" />
                     </div>
                     <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl rounded-tl-md shadow-lg border border-slate-200 dark:border-slate-700">
@@ -359,7 +361,7 @@ export default function ChatPage() {
                   onClick={handleSendMessage}
                   disabled={!inputValue.trim() || isTyping}
                   size="sm"
-                  className="absolute right-2 top-2 h-8 w-8 p-0 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700"
+                  className="absolute right-2 top-2 h-8 w-8 p-0 bg-slate-900 hover:bg-black dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
                 >
                   <Send className="h-4 w-4" />
                 </Button>

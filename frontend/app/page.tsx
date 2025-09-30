@@ -37,7 +37,7 @@ export default function Home() {
           <div className="text-center">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-slate-100 mb-6">
               Find the Perfect{' '}
-              <span className="bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
+              <span className="text-slate-900 dark:text-slate-100">
                 Journal
               </span>{' '}
               for Your Research
@@ -48,7 +48,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-12">
               <Link href="/upload">
-                <Button size="lg" className="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+                <Button size="lg" className="bg-slate-900 hover:bg-black dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 text-white px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
                   <Upload className="mr-2 h-5 w-5" />
                   Find My Journal
                 </Button>
@@ -65,7 +65,7 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className="px-4 sm:px-6 lg:px-8 py-16 bg-white/50 dark:bg-slate-900/50">
+      <section className="px-4 sm:px-6 lg:px-8 py-16 bg-white dark:bg-slate-900">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
@@ -87,7 +87,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-              Why Choose JournalFinder?
+              Why Choose JournalPal.ai?
             </h2>
             <p className="text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
               Our mission is to revolutionize how researchers discover and select journals for publication.
@@ -95,10 +95,10 @@ export default function Home() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+              <Card key={index} className="group hover:shadow-xl transition-all duration-300 border border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-800">
                 <CardContent className="p-8">
-                  <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <feature.icon className="h-6 w-6 text-white" />
+                  <div className="flex items-center justify-center w-12 h-12 rounded-xl mb-6 group-hover:scale-110 transition-transform duration-300 border border-slate-200 dark:border-slate-700">
+                    <feature.icon className="h-6 w-6 text-slate-900 dark:text-slate-100" />
                   </div>
                   <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
                     {feature.title}
@@ -114,7 +114,7 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="px-4 sm:px-6 lg:px-8 py-20 bg-gradient-to-br from-blue-50 to-emerald-50 dark:from-slate-900 dark:to-slate-800">
+      <section className="px-4 sm:px-6 lg:px-8 py-20 bg-slate-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
@@ -126,8 +126,8 @@ export default function Home() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-full mx-auto mb-6">
-                <span className="text-2xl font-bold text-white">1</span>
+              <div className="flex items-center justify-center w-16 h-16 rounded-full mx-auto mb-6 border border-slate-200 dark:border-slate-700">
+                <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">1</span>
               </div>
               <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
                 Upload Your Paper
@@ -137,8 +137,8 @@ export default function Home() {
               </p>
             </div>
             <div className="text-center">
-              <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-full mx-auto mb-6">
-                <span className="text-2xl font-bold text-white">2</span>
+              <div className="flex items-center justify-center w-16 h-16 rounded-full mx-auto mb-6 border border-slate-200 dark:border-slate-700">
+                <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">2</span>
               </div>
               <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
                 AI Analysis
@@ -148,8 +148,8 @@ export default function Home() {
               </p>
             </div>
             <div className="text-center">
-              <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-full mx-auto mb-6">
-                <span className="text-2xl font-bold text-white">3</span>
+              <div className="flex items-center justify-center w-16 h-16 rounded-full mx-auto mb-6 border border-slate-200 dark:border-slate-700">
+                <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">3</span>
               </div>
               <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
                 Get Recommendations
@@ -172,7 +172,7 @@ export default function Home() {
             Join thousands of researchers who have discovered the right journals for their work.
           </p>
           <Link href="/auth">
-            <Button size="lg" className="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+            <Button size="lg" className="bg-slate-900 hover:bg-black dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
               Get Started Today
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>

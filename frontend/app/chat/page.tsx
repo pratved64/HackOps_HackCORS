@@ -16,130 +16,6 @@ interface Message {
   data?: any;
 }
 
-// Dummy responses for different types of queries
-const getDummyResponse = (query: string): Message => {
-  const id = Math.random().toString(36).substr(2, 9);
-  const timestamp = new Date();
-
-  // Check query type and return appropriate response
-  if (query.toLowerCase().includes('format') || query.toLowerCase().includes('formatting')) {
-    return {
-      id,
-      role: 'assistant',
-      content: "I'll help you format your paper according to the publisher's guidelines. Here's a comprehensive formatting guide:",
-      timestamp,
-      type: 'formatting-guide',
-      data: {
-        guidelines: [
-          {
-            aspect: 'Title Page',
-            requirements: '• Title in Title Case (max 150 characters)\n• Author names with affiliations\n• Corresponding author email\n• ORCID IDs if available'
-          },
-          {
-            aspect: 'Abstract',
-            requirements: '• 150-300 words\n• Structured format (Background, Methods, Results, Conclusions)\n• No references or abbreviations\n• Keywords: 3-6 terms'
-          },
-          {
-            aspect: 'Main Text',
-            requirements: '• Double-spaced, 12pt Times New Roman\n• 1-inch margins all around\n• Line numbers for review\n• Sections: Introduction, Methods, Results, Discussion'
-          },
-          {
-            aspect: 'References',
-            requirements: '• Vancouver style (numbered)\n• Maximum 50 references\n• Include DOIs where available\n• Recent references preferred (within 5 years)'
-          },
-          {
-            aspect: 'Figures & Tables',
-            requirements: '• High resolution (300 DPI minimum)\n• Separate files for each figure\n• Descriptive captions\n• Referenced in text'
-          }
-        ]
-      }
-    };
-  } else if (query.toLowerCase().includes('journal') && (query.toLowerCase().includes('recommend') || query.toLowerCase().includes('suggest'))) {
-    return {
-      id,
-      role: 'assistant',
-      content: "Based on your query, here are some excellent journal recommendations:",
-      timestamp,
-      type: 'journal-list',
-      data: {
-        journals: [
-          {
-            name: "IEEE Transactions on Pattern Analysis",
-            publisher: "IEEE",
-            impactFactor: 17.861,
-            acceptanceRate: "14%",
-            scope: "Computer vision, pattern recognition, machine learning"
-          },
-          {
-            name: "Journal of Machine Learning Research",
-            publisher: "JMLR",
-            impactFactor: 4.994,
-            acceptanceRate: "23%",
-            scope: "Machine learning theory and applications"
-          },
-          {
-            name: "Neural Networks",
-            publisher: "Elsevier",
-            impactFactor: 9.657,
-            acceptanceRate: "20%",
-            scope: "Neural network architectures and applications"
-          }
-        ]
-      }
-    };
-  } else if (query.toLowerCase().includes('submission') || query.toLowerCase().includes('submit')) {
-    return {
-      id,
-      role: 'assistant',
-      content: `Here are the typical submission steps for academic journals:
-
-**1. Pre-Submission Checklist**
-- Ensure your research is novel and significant
-- Check journal scope and recent publications
-- Review author guidelines thoroughly
-- Prepare all required documents
-
-**2. Manuscript Preparation**
-- Format according to journal guidelines
-- Include cover letter explaining significance
-- Prepare graphical abstract (if required)
-- Complete author disclosure forms
-
-**3. Submission Process**
-- Create account on journal's submission system
-- Upload manuscript and supplementary files
-- Complete metadata forms
-- Submit and track status
-
-**4. Post-Submission**
-- Expect initial editorial screening (1-2 weeks)
-- Peer review process (2-4 months)
-- Respond promptly to reviewer comments
-- Final decision and publication
-
-Would you like specific submission guidelines for a particular journal?`,
-      timestamp,
-      type: 'text'
-    };
-  } else {
-    return {
-      id,
-      role: 'assistant',
-      content: `I'm here to help with journal recommendations, paper formatting, submission guidelines, and research publication questions.
-
-I can assist you with:
-• **Journal recommendations** based on your research area
-• **Formatting guidelines** for specific publishers
-• **Submission processes** and requirements  
-• **Publication strategies** and best practices
-• **Journal metrics** and selection criteria
-
-What specific aspect of academic publishing would you like to explore?`,
-      timestamp,
-      type: 'text'
-    };
-  }
-};
 
 const quickActions = [
   { label: 'Format my paper', icon: FileText, query: 'Help me format my paper for publication' },
@@ -153,7 +29,7 @@ export default function ChatPage() {
     {
       id: '1',
       role: 'assistant',
-      content: "Hello! I'm your AI research assistant. I'm here to help you with journal recommendations, paper formatting, submission guidelines, and any questions about academic publishing. How can I assist you today?",
+      content: "Hello! I'm your AI research assistant powered by Gemini. I specialize in academic publishing and can help you with:\n\n• Journal recommendations based on your research\n• Paper formatting and submission guidelines\n• Publication strategies and best practices\n• Questions about the research publication process\n\nIf you've uploaded a paper on the Upload page, I can provide context-aware assistance. How can I help you today?",
       timestamp: new Date(),
       type: 'text'
     }
@@ -183,15 +59,57 @@ export default function ChatPage() {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const userQuery = inputValue;
     setInputValue('');
     setIsTyping(true);
 
-    // Simulate AI response delay
-    setTimeout(() => {
-      const response = getDummyResponse(inputValue);
-      setMessages(prev => [...prev, response]);
+    try {
+      // Get uploaded paper context if available
+      const paperContext = sessionStorage.getItem('uploadedPaperText') || '';
+      
+      // Create a research-focused prompt with context
+      const systemPrompt = `You are an AI research assistant specialized in academic publishing, journal recommendations, paper formatting, and submission guidelines. You ONLY provide information related to research work, academic publishing, and scholarly communication.
+
+${paperContext ? `The user has uploaded a research paper. Here is the content for context:\n\n${paperContext.slice(0, 3000)}\n\n` : ''}
+
+User question: ${userQuery}
+
+Provide a helpful, accurate response focused on research and academic publishing. If the question is not related to research work, politely redirect the user to ask about journal recommendations, paper formatting, submission guidelines, or other academic publishing topics.`;
+
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+      const response = await fetch(`${baseUrl}/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: systemPrompt }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const aiResponse: Message = {
+        id: Math.random().toString(36).substr(2, 9),
+        role: 'assistant',
+        content: data.generated_text || 'I apologize, but I could not generate a response. Please try again.',
+        timestamp: new Date(),
+        type: 'text'
+      };
+
+      setMessages(prev => [...prev, aiResponse]);
+    } catch (error) {
+      console.error('Error calling Gemini API:', error);
+      const errorMessage: Message = {
+        id: Math.random().toString(36).substr(2, 9),
+        role: 'assistant',
+        content: 'I apologize, but I encountered an error processing your request. Please ensure the backend server is running and try again.',
+        timestamp: new Date(),
+        type: 'text'
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const handleQuickAction = (query: string) => {

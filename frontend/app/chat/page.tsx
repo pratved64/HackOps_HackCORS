@@ -306,7 +306,7 @@ export default function ChatPage() {
             <Button
               key={`qa-${action.label}`}
               variant="outline"
-              className="h-auto p-4 flex flex-col items-center space-y-2 hover:shadow-md transition-all duration-300 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-500 dark:hover:text-slate-900"
+              className="h-auto p-4 flex flex-col items-center space-y-2 hover:shadow-md transition-all duration-300 hover:bg-purple-600 hover:text-white dark:hover:bg-purple-500 dark:hover:text-slate-900"
               onClick={() => handleQuickAction(action.query)}
             >
               <action.icon className="h-5 w-5" />
@@ -316,7 +316,7 @@ export default function ChatPage() {
         </div>
 
         {/* Chat Messages */}
-        <Card className="flex-1 shadow-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+        <Card className="flex-1 glass brutal bg-white/5 dark:bg-white/5">
           <CardContent className="p-6">
             <div className="h-96 overflow-y-auto space-y-4 mb-6" id="messages-container">
               {messages.map((message) => (

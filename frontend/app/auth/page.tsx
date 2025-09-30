@@ -29,8 +29,8 @@ export default function AuthPage() {
         <div className="space-y-8">
           <div>
             <div className="flex items-center space-x-3 mb-6">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-slate-900 dark:bg-slate-100">
-                <BookOpen className="h-7 w-7 text-white dark:text-slate-900" />
+              <div className="w-12 h-12 rounded-lg flex items-center justify-center glass brutal">
+                <BookOpen className="h-7 w-7 text-slate-900 dark:text-slate-100" />
               </div>
               <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
                 JournalPal.ai
@@ -59,8 +59,8 @@ export default function AuthPage() {
               </div>
             </div>
             <div className="flex items-start space-x-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
-                <BookOpen className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              <div className="flex-shrink-0 w-8 h-8 bg-violet-100 dark:bg-violet-900/30 rounded-lg flex items-center justify-center">
+                <BookOpen className="h-4 w-4 text-violet-600 dark:text-violet-400" />
               </div>
               <div>
                 <h3 className="font-semibold text-slate-900 dark:text-slate-100">
@@ -72,8 +72,8 @@ export default function AuthPage() {
               </div>
             </div>
             <div className="flex items-start space-x-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-amber-100 dark:bg-amber-900/30 rounded-lg flex items-center justify-center">
-                <User className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+              <div className="flex-shrink-0 w-8 h-8 bg-fuchsia-100 dark:bg-fuchsia-900/30 rounded-lg flex items-center justify-center">
+                <User className="h-4 w-4 text-fuchsia-600 dark:text-fuchsia-400" />
               </div>
               <div>
                 <h3 className="font-semibold text-slate-900 dark:text-slate-100">
@@ -88,7 +88,7 @@ export default function AuthPage() {
         </div>
 
         {/* Right side - Authentication forms */}
-        <Card className="w-full max-w-md mx-auto shadow-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+        <Card className="w-full max-w-md mx-auto glass brutal bg-white/5 dark:bg-white/5">
           <CardHeader className="text-center pb-4">
             <CardTitle className="text-2xl font-bold text-slate-900 dark:text-slate-100">
               Welcome Back
@@ -138,7 +138,7 @@ export default function AuthPage() {
                   </div>
                   <Button
                     type="submit"
-                    className="w-full h-11 bg-slate-900 hover:bg-black dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 text-white font-semibold rounded-lg transition-all duration-300"
+                    className="w-full h-11 glass-strong brutal brutal-hover bg-slate-900/80 dark:bg-white/90 text-white dark:text-slate-900 font-bold rounded-lg transition-all duration-300"
                     disabled={isLoading}
                   >
                     {isLoading ? 'Signing In...' : 'Sign In'}
@@ -195,7 +195,7 @@ export default function AuthPage() {
                   </div>
                   <Button
                     type="submit"
-                    className="w-full h-11 bg-slate-900 hover:bg-black dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 text-white font-semibold rounded-lg transition-all duration-300"
+                    className="w-full h-11 glass-strong brutal brutal-hover bg-slate-900/80 dark:bg-white/90 text-white dark:text-slate-900 font-bold rounded-lg transition-all duration-300"
                     disabled={isLoading}
                   >
                     {isLoading ? 'Creating Account...' : 'Create Account'}

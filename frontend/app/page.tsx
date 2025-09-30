@@ -48,13 +48,13 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-12">
               <Link href="/upload">
-                <Button size="lg" className="bg-slate-900 hover:bg-black dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 text-white px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+                <Button size="lg" className="glass-strong brutal brutal-hover bg-slate-900/80 dark:bg-white/90 text-white dark:text-slate-900 px-8 py-3 text-lg font-bold rounded-xl transition-all duration-300">
                   <Upload className="mr-2 h-5 w-5" />
                   Find My Journal
                 </Button>
               </Link>
               <Link href="/chat">
-                <Button variant="outline" size="lg" className="px-8 py-3 text-lg font-semibold rounded-xl border-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300">
+                <Button variant="outline" size="lg" className="glass brutal brutal-hover px-8 py-3 text-lg font-bold rounded-xl border-2 border-slate-900 dark:border-slate-100 transition-all duration-300">
                   <MessageCircle className="mr-2 h-5 w-5" />
                   Ask AI Assistant
                 </Button>
@@ -65,15 +65,15 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className="px-4 sm:px-6 lg:px-8 py-16 bg-white dark:bg-slate-900">
+      <section className="px-4 sm:px-6 lg:px-8 py-16">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-3xl sm:text-4xl font-bold text-purple-600 dark:text-purple-300 mb-2">
+              <div key={index} className="text-center glass brutal p-6 rounded-2xl">
+                <div className="text-3xl sm:text-4xl font-bold neo-text text-purple-600 dark:text-purple-300 mb-2">
                   {stat.value}
                 </div>
-                <div className="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium">
+                <div className="text-sm sm:text-base text-slate-700 dark:text-slate-200 font-semibold">
                   {stat.label}
                 </div>
               </div>
@@ -95,15 +95,15 @@ export default function Home() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="group hover:shadow-xl transition-all duration-300 border border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-800">
+              <Card key={index} className="group glass brutal transition-all duration-300 bg-white/5 dark:bg-white/5 hover:-translate-y-1">
                 <CardContent className="p-8">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-xl mb-6 group-hover:scale-110 transition-transform duration-300 border border-slate-200 dark:border-slate-700">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-lg mb-6 group-hover:scale-110 transition-transform duration-300 glass brutal">
                     <feature.icon className="h-6 w-6 text-slate-900 dark:text-slate-100" />
                   </div>
-                  <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
+                  <h3 className="text-xl font-bold neo-text text-slate-900 dark:text-slate-100 mb-3">
                     {feature.title}
                   </h3>
-                  <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                  <p className="text-slate-700 dark:text-slate-200 leading-relaxed">
                     {feature.description}
                   </p>
                 </CardContent>
@@ -114,7 +114,7 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="px-4 sm:px-6 lg:px-8 py-20 bg-slate-50 dark:bg-slate-900">
+      <section className="px-4 sm:px-6 lg:px-8 py-20">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
@@ -126,35 +126,35 @@ export default function Home() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full mx-auto mb-6 border border-slate-200 dark:border-slate-700">
-                <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">1</span>
+              <div className="flex items-center justify-center w-16 h-16 rounded-full mx-auto mb-6 glass brutal">
+                <span className="text-2xl font-bold neo-text text-slate-900 dark:text-slate-100">1</span>
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
+              <h3 className="text-xl font-bold neo-text text-slate-900 dark:text-slate-100 mb-3">
                 Upload Your Paper
               </h3>
-              <p className="text-slate-600 dark:text-slate-300">
+              <p className="text-slate-700 dark:text-slate-200">
                 Upload your research paper (PDF or Word) or provide title and abstract
               </p>
             </div>
             <div className="text-center">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full mx-auto mb-6 border border-slate-200 dark:border-slate-700">
-                <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">2</span>
+              <div className="flex items-center justify-center w-16 h-16 rounded-full mx-auto mb-6 glass brutal">
+                <span className="text-2xl font-bold neo-text text-slate-900 dark:text-slate-100">2</span>
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
+              <h3 className="text-xl font-bold neo-text text-slate-900 dark:text-slate-100 mb-3">
                 AI Analysis
               </h3>
-              <p className="text-slate-600 dark:text-slate-300">
+              <p className="text-slate-700 dark:text-slate-200">
                 Our AI analyzes your content and matches it with suitable journals
               </p>
             </div>
             <div className="text-center">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full mx-auto mb-6 border border-slate-200 dark:border-slate-700">
-                <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">3</span>
+              <div className="flex items-center justify-center w-16 h-16 rounded-full mx-auto mb-6 glass brutal">
+                <span className="text-2xl font-bold neo-text text-slate-900 dark:text-slate-100">3</span>
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
+              <h3 className="text-xl font-bold neo-text text-slate-900 dark:text-slate-100 mb-3">
                 Get Recommendations
               </h3>
-              <p className="text-slate-600 dark:text-slate-300">
+              <p className="text-slate-700 dark:text-slate-200">
                 Receive ranked journal suggestions with detailed information
               </p>
             </div>
@@ -172,7 +172,7 @@ export default function Home() {
             Join thousands of researchers who have discovered the right journals for their work.
           </p>
           <Link href="/auth">
-            <Button size="lg" className="bg-slate-900 hover:bg-black dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+            <Button size="lg" className="glass-strong brutal brutal-hover bg-slate-900/80 dark:bg-white/90 text-white dark:text-slate-900 px-8 py-4 text-lg font-bold rounded-xl transition-all duration-300">
               Get Started Today
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>

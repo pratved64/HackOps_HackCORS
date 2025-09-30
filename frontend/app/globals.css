@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 264 9% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 264 9% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 264 9% 15%;
+    --primary: 262 83% 58%;         /* violet-600 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 20% 94%;
+    --secondary-foreground: 264 9% 15%;
+    --muted: 210 20% 94%;
+    --muted-foreground: 264 9% 35%;
+    --accent: 277 91% 65%;          /* fuchsia-500 */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 25% 86%;
+    --input: 210 25% 86%;
+    --ring: 262 83% 58%;
+    --chart-1: 262 83% 58%;
+    --chart-2: 277 91% 65%;
+    --chart-3: 292 84% 61%;         /* purple-500 */
+    --chart-4: 316 72% 59%;         /* pink-500 */
+    --chart-5: 340 82% 52%;         /* rose-500 */
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 264 9% 10%;       /* near-black with purple tint */
+    --foreground: 0 0% 98%;
+    --card: 264 9% 12%;
+    --card-foreground: 0 0% 98%;
+    --popover: 264 9% 12%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 270 95% 75%;         /* violet-300 */
+    --primary-foreground: 264 9% 10%;
+    --secondary: 264 6% 16%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 264 6% 16%;
+    --muted-foreground: 264 4% 70%;
+    --accent: 286 84% 81%;          /* fuchsia-300 */
+    --accent-foreground: 264 9% 10%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 215 14% 22%;
+    --input: 215 14% 22%;
+    --ring: 270 95% 75%;
+    --chart-1: 270 95% 75%;
+    --chart-2: 286 84% 81%;
+    --chart-3: 292 84% 61%;
+    --chart-4: 316 72% 59%;
+    --chart-5: 340 82% 60%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+}

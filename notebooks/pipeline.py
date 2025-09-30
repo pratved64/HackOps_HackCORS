@@ -27,10 +27,10 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # chromadb connection
 print("Connecting to chromadb...")
-client = chromadb.HttpClient(
-    host=CHROMA_HOST,
-    headers={"Authorization": f"Bearer: {CHROMA_API_KEY}"}
-)
+# client = chromadb.HttpClient(
+#     host=CHROMA_HOST,
+#     headers={"Authorization": f"Bearer: {CHROMA_API_KEY}"}
+# )
 
 
 def get_scibert_embedding(text):
@@ -47,7 +47,6 @@ def get_scibert_embedding(text):
     return mean_pooled_embedding.cpu().numpy().tolist()
 
 # SAMPLE, REMOVE BEFORE PUSHING TO DEPLOYMENT
-# balls
 journals = [
     {
         "id": "J001",
@@ -79,25 +78,26 @@ journals = [
     }
 ]
 
-for journal in tqdm(journals, desc="Processing Journals..."):
+for journal in tqdm.tqdm(journals, desc="Processing Journals..."):
     text_to_embed = f"{journal['title']}: {journal['description']}"
 
     embedding = get_scibert_embedding(text_to_embed)
+    print(embedding[:10])
 
-    collection.upsert( # define collections once the chromadb is ready
-        ids=[journal["id"]],
-        embeddings=embedding,
-        documents=[text_to_embed],
-        metadatas=[{
-            "title": journal["title"],
-            "citations": journal["citations"],
-            "publisher": journal["publisher"]
-        }]
-    )
+    # collection.upsert( # define collections once the chromadb is ready
+    #     ids=[journal["id"]],
+    #     embeddings=embedding,
+    #     documents=[text_to_embed],
+    #     metadatas=[{
+    #         "title": journal["title"],
+    #         "citations": journal["citations"],
+    #         "publisher": journal["publisher"]
+    #     }]
+    # )
 
 print("\nEnrichment complete! All journals now have a vector embedding in the database.")
 
 print("\n--- Verifying the data ---")
-count = collection.count()
-print(f"The collection now contains {count} items.")
+# count = collection.count()
+# print(f"The collection now contains {count} items.")
 

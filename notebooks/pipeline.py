@@ -47,6 +47,7 @@ def get_scibert_embedding(text):
     return mean_pooled_embedding.cpu().numpy().tolist()
 
 # SAMPLE, REMOVE BEFORE PUSHING TO DEPLOYMENT
+# balls
 journals = [
     {
         "id": "J001",

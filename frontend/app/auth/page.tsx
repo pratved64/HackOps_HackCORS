@@ -46,8 +46,8 @@ export default function AuthPage() {
 
           <div className="space-y-6">
             <div className="flex items-start space-x-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                <Zap className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <div className="flex-shrink-0 w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                <Zap className="h-4 w-4 text-purple-600 dark:text-purple-300" />
               </div>
               <div>
                 <h3 className="font-semibold text-slate-900 dark:text-slate-100">

@@ -9,77 +9,25 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, FileText, Loader as Loader2, CircleCheck as CheckCircle, ExternalLink, Star, TrendingUp, Clock } from 'lucide-react';
+import { Upload, FileText, Loader as Loader2, CircleCheck as CheckCircle } from 'lucide-react';
 
-// Dummy data for journal recommendations
-const dummyJournals = [
-  {
-    name: "Nature Machine Intelligence",
-    publisher: "Springer Nature",
-    type: "Q1 Journal",
-    link: "https://nature.com/natmachintell",
-    impactFactor: 25.898,
-    acceptanceRate: "12%",
-    avgReviewTime: "3-4 months",
-    matchScore: 95,
-    description: "Leading journal in AI and machine learning research"
-  },
-  {
-    name: "Journal of Artificial Intelligence Research",
-    publisher: "AAAI Press",
-    type: "Q1 Journal", 
-    link: "https://jair.org",
-    impactFactor: 4.051,
-    acceptanceRate: "25%",
-    avgReviewTime: "2-3 months",
-    matchScore: 88,
-    description: "Premier venue for AI research with rigorous peer review"
-  },
-  {
-    name: "IEEE Transactions on Neural Networks",
-    publisher: "IEEE",
-    type: "Q1 Journal",
-    link: "https://ieee.org/tnnls",
-    impactFactor: 14.255,
-    acceptanceRate: "18%",
-    avgReviewTime: "4-6 months",
-    matchScore: 82,
-    description: "Top-tier journal for neural network and learning systems"
-  },
-  {
-    name: "Machine Learning",
-    publisher: "Springer",
-    type: "Q2 Journal",
-    link: "https://springer.com/ml",
-    impactFactor: 3.986,
-    acceptanceRate: "30%",
-    avgReviewTime: "3-4 months",
-    matchScore: 78,
-    description: "Established journal covering all aspects of machine learning"
-  },
-  {
-    name: "Neural Computing & Applications",
-    publisher: "Springer",
-    type: "Q2 Journal",
-    link: "https://springer.com/nca",
-    impactFactor: 5.606,
-    acceptanceRate: "35%",
-    avgReviewTime: "2-3 months",
-    matchScore: 72,
-    description: "Applied neural computing and intelligent systems"
-  }
-];
+type JournalResult = {
+  name: string;
+  description: string;
+  score: number;
+};
 
 export default function UploadPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [results, setResults] = useState<typeof dummyJournals | null>(null);
+  const [results, setResults] = useState<JournalResult[] | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [uploadMethod, setUploadMethod] = useState<'file' | 'text'>('file');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const extractPdfText = async (file: File): Promise<string> => {
-    // Configure pdfjs worker: use CDN to avoid bundler worker resolution issues
-    (pdfjsLib as any).GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@4.6.82/build/pdf.worker.min.mjs';
+    // Configure pdfjs worker: use CDN with the SAME version as the imported API to avoid version mismatch
+    const pdfjsVersion = (pdfjsLib as any)?.version || '4.10.38';
+    (pdfjsLib as any).GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsVersion}/build/pdf.worker.min.mjs`;
     const arrayBuffer = await file.arrayBuffer();
     const loadingTask = (pdfjsLib as any).getDocument({ data: arrayBuffer });
     const pdf = await loadingTask.promise;
@@ -97,6 +45,12 @@ export default function UploadPage() {
     const arrayBuffer = await file.arrayBuffer();
     const result = await (mammoth as any).extractRawText({ arrayBuffer });
     return (result.value || '').trim();
+  };
+
+  const first2000Words = (text: string): string => {
+    const words = text.trim().split(/\s+/);
+    if (words.length <= 2000) return text.trim();
+    return words.slice(0, 2000).join(' ');
   };
 
   const handleFileUpload = async (file: File) => {
@@ -119,17 +73,11 @@ export default function UploadPage() {
       console.log('[Upload] Extracted text characters:', extractedText.length);
       console.log('[Upload] First 1000 chars:', extractedText.slice(0, 1000));
 
-      // Store for later steps
       sessionStorage.setItem('uploadedPaperText', extractedText);
 
-      // Send to backend
-      await sendPaperToBackend({
-        filename: file.name,
-        mimeType: file.type,
-        text: extractedText,
-      });
-
-      setResults(dummyJournals);
+      const trimmed = first2000Words(extractedText);
+      const apiResults = await searchJournals(trimmed);
+      setResults(apiResults);
     } catch (err) {
       console.error('Failed to process file:', err);
     } finally {
@@ -149,11 +97,12 @@ export default function UploadPage() {
     console.log('[Upload] Text input chars:', text.length);
     sessionStorage.setItem('uploadedPaperText', text);
     try {
-      await sendPaperToBackend({ filename: 'manual-input.txt', mimeType: 'text/plain', text });
+      const trimmed = first2000Words(text);
+      const apiResults = await searchJournals(trimmed);
+      setResults(apiResults);
     } catch (err) {
       console.error('Failed sending text to backend:', err);
     }
-    setResults(dummyJournals);
     setIsAnalyzing(false);
   };
 
@@ -182,25 +131,24 @@ export default function UploadPage() {
 
   const getMatchScoreColor = (score: number) => {
     if (score >= 90) return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300';
-    if (score >= 80) return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
+    if (score >= 80) return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300';
     if (score >= 70) return 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300';
     return 'bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300';
   };
 
-  const sendPaperToBackend = async (payload: { filename: string; mimeType: string; text: string; }) => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
-    const res = await fetch(`${baseUrl}/api/papers`, {
+  const searchJournals = async (text: string): Promise<JournalResult[]> => {
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    const res = await fetch(`${baseUrl}/search_journals`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, top_n: 5 }),
     });
     if (!res.ok) {
       const body = await res.text();
       throw new Error(`Backend error ${res.status}: ${body}`);
     }
-    return res.json();
+    const data = await res.json();
+    return (data?.results || []) as JournalResult[];
   };
 
   return (
@@ -252,7 +200,7 @@ export default function UploadPage() {
                 <div
                   className={`border-2 border-dashed rounded-lg p-8 text-center transition-all duration-300 ${
                     dragActive 
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                      ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20' 
                       : 'border-slate-300 dark:border-slate-600 hover:border-slate-400'
                   }`}
                   onDrop={handleDrop}
@@ -344,7 +292,7 @@ export default function UploadPage() {
               {isAnalyzing ? (
                 <div className="space-y-6">
                   <div className="flex items-center space-x-3">
-                    <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
+                    <Loader2 className="h-5 w-5 animate-spin text-purple-600" />
                     <span className="text-slate-900 dark:text-slate-100 font-medium">
                       Analyzing your research...
                     </span>
@@ -395,80 +343,33 @@ export default function UploadPage() {
         {results && (
           <Card className="shadow-sm border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800">
             <CardHeader>
-              <CardTitle className="text-2xl font-bold text-slate-900 dark:text-slate-100 flex items-center">
-                <Star className="mr-2 h-6 w-6 text-yellow-500" />
+              <CardTitle className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                 Recommended Journals
               </CardTitle>
               <CardDescription>
-                AI-powered journal recommendations ranked by compatibility with your research
+                Retrieved from the backend based on your paper's content
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {results.map((journal, index) => (
-                  <div 
-                    key={index} 
-                    className="border border-slate-200 dark:border-slate-700 rounded-lg p-6 hover:shadow-md transition-shadow duration-300"
-                  >
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                      <div className="flex-1 space-y-3">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-1">
-                              {journal.name}
-                            </h3>
-                            <p className="text-slate-600 dark:text-slate-300 text-sm mb-2">
-                              {journal.description}
-                            </p>
-                            <div className="flex flex-wrap items-center gap-2">
-                              <Badge variant="outline" className="text-xs">
-                                {journal.publisher}
-                              </Badge>
-                              <Badge variant="secondary" className="text-xs">
-                                {journal.type}
-                              </Badge>
-                              <Badge className={`text-xs font-semibold ${getMatchScoreColor(journal.matchScore)}`}>
-                                {journal.matchScore}% Match
-                              </Badge>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-                          <div className="flex items-center space-x-2">
-                            <TrendingUp className="h-4 w-4 text-emerald-500" />
-                            <span className="text-slate-600 dark:text-slate-300">
-                              IF: <strong className="text-slate-900 dark:text-slate-100">{journal.impactFactor}</strong>
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <CheckCircle className="h-4 w-4 text-blue-500" />
-                            <span className="text-slate-600 dark:text-slate-300">
-                              Accept: <strong className="text-slate-900 dark:text-slate-100">{journal.acceptanceRate}</strong>
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Clock className="h-4 w-4 text-amber-500" />
-                            <span className="text-slate-600 dark:text-slate-300">
-                              Review: <strong className="text-slate-900 dark:text-slate-100">{journal.avgReviewTime}</strong>
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => window.open(journal.link, '_blank')}
-                              className="h-8 px-3 text-xs"
-                            >
-                              <ExternalLink className="h-3 w-3 mr-1" />
-                              Visit Journal
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-200 dark:border-slate-700">
+                      <th className="py-3 pr-4 text-slate-700 dark:text-slate-300">Name</th>
+                      <th className="py-3 pr-4 text-slate-700 dark:text-slate-300">Description</th>
+                      <th className="py-3 pr-0 text-slate-700 dark:text-slate-300">Score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {results.map((j, idx) => (
+                      <tr key={`jr-${idx}`} className="border-b border-slate-200 dark:border-slate-700 last:border-0">
+                        <td className="py-3 pr-4 font-medium text-slate-900 dark:text-slate-100">{j.name}</td>
+                        <td className="py-3 pr-4 text-slate-600 dark:text-slate-300">{j.description}</td>
+                        <td className="py-3 pr-0 text-slate-900 dark:text-slate-100">{typeof j.score === 'number' ? j.score.toFixed(4) : j.score}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </CardContent>
           </Card>

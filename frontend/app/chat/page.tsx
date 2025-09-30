@@ -211,8 +211,8 @@ export default function ChatPage() {
             <div className="bg-slate-900 dark:bg-white dark:text-slate-900 text-white p-4 rounded-2xl rounded-tr-md shadow-lg">
               <p className="text-sm leading-relaxed">{message.content}</p>
             </div>
-            <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-              <User className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+              <User className="h-4 w-4 text-purple-600 dark:text-purple-300" />
             </div>
           </div>
         </div>
